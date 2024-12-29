@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+# Easier navigation: .., ..., ...., ....., ~ and -
+alias ..="cd .."
+
+# Shortcuts
+alias drive="cd ~/SynologyDrive"
+alias docs="cd ~/Documents"
+alias dl="cd ~/Downloads"
+alias dt="cd ~/Desktop"
+alias finder="open . -a Finder"
+
+# Get macOS Software Updates, update Homebrew installed packages
+alias update="sudo softwareupdate -i -a; brew update; brew upgrade; brew cleanup"
+
+# Git
+alias gs="git status"
+alias gaa="git add --all"
+alias gcom="git commit -m"
+
+# Conda
+alias deactivate="conda deactivate"
