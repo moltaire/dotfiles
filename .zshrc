@@ -136,6 +136,8 @@ fi
 
 # load aliases
 source ~/.aliases
+# load functions
+source ~/.functions
 
 # change default editor to nano
 export EDITOR=nano

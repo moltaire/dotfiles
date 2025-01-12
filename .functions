@@ -1,0 +1,7 @@
+remove_hist() {
+    if [ -z "$1" ]; then
+        echo "Usage: remove_hist <string>"
+        return 1
+    fi
+    LC_ALL=C sed -i '' "/$1/d" "$HISTFILE" && echo "Removed entries containing '$1' from history."
+}
