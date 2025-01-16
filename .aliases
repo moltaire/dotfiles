@@ -11,7 +11,7 @@ alias dt="cd ~/Desktop"
 alias finder="open . -a Finder"
 
 # Get macOS Software Updates, update Homebrew installed packages
-alias update="sudo softwareupdate -i -a; brew update; brew upgrade; brew cleanup"
+alias update="sudo softwareupdate -i -a; mas upgrade; brew update; brew upgrade; brew cleanup"
 
 # Git
 alias gs="git status"
