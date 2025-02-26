@@ -8,10 +8,11 @@ remove_hist() {
 }
 
 function update_webui() {
-    echo "Removing WebUI container..."
+    echo "Updating WebUI..."
+    echo "    Removing WebUI docker container..."
     docker rm -f open-webui
-    echo "Pulling current WebUI image..."
+    echo "    Pulling current WebUI docker image..."
     docker pull ghcr.io/open-webui/open-webui:main
-    echo "Starting updated WebUI image"
+    echo "    Starting updated WebUI docker image"
     docker run -d -p 3000:8080 -v open-webui:/app/backend/data --name open-webui ghcr.io/open-webui/open-webui:main
 }
