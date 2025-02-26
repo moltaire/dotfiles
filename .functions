@@ -6,3 +6,12 @@ remove_hist() {
     LC_ALL=C sed -i '' "/$1/d" "$HISTFILE" && echo "Removed entries containing '$1' from history."
     LC_ALL=C sed -i '' "/remove_hist/d" "$HISTFILE"
 }
+
+function update_webui() {
+    echo "Removing WebUI container..."
+    docker rm -f open-webui
+    echo "Pulling current WebUI image..."
+    docker pull ghcr.io/open-webui/open-webui:main
+    echo "Starting updated WebUI image"
+    docker run -d -p 3000:8080 -v open-webui:/app/backend/data --name open-webui ghcr.io/open-webui/open-webui:main
+}
