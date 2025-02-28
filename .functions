@@ -9,6 +9,39 @@ remove_hist() {
 
 function update_webui() {
     echo "Updating WebUI..."
+
+    # Check for --force flag
+    if [ "$1" = "--force" ]; then
+        force_update=1
+    fi
+
+    local container_name="open-webui"
+    local image_name
+    local local_digest remote_digest
+
+    echo "    Checking for updates..."
+    # Get the image name from the running container
+    image_name=$(docker inspect --format='{{.Config.Image}}' "$container_name" 2>/dev/null)
+    if [ -z "$image_name" ]; then
+        echo "Error: Container '$container_name' not found."
+        return 1
+    fi
+
+    # Get the current local image digest
+    local_digest=$(docker images --no-trunc --format '{{.Digest}}' "$image_name")
+
+    # Pull the latest image
+    docker pull ghcr.io/open-webui/open-webui:main
+
+    # Get the new image digest from the remote repository
+    remote_digest=$(docker images --no-trunc --format '{{.Digest}}' "$image_name")
+
+    # Check if update is needed
+    if [ "$local_digest" = "$remote_digest" ] && [ "$force_update" -eq 0 ]; then
+        echo "No update available for '$image_name'."
+        return 0
+    fi
+
     echo "    Removing WebUI docker container..."
     docker rm -f open-webui
     echo "    Pulling current WebUI docker image..."
