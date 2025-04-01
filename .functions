@@ -110,4 +110,7 @@ mullvad_toggle() {
         echo "Usage: mullvad_toggle [on [server_name] | off]"
         return 1
     fi
+    # Get Mullvad connection status
+    STATUS=$(mullvad status)
+    echo "Mullvad Status: $STATUS"  # Print status
 }
