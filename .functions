@@ -49,3 +49,65 @@ function update_webui() {
     echo "    Starting updated WebUI docker image"
     docker run -d -p 3000:8080 -v open-webui:/app/backend/data --name open-webui ghcr.io/open-webui/open-webui:main
 }
+
+mullvad_toggle() {
+    # Toggle Mullvad VPN connection and lockdown mode.
+    # 
+    # Usage:
+    #   mullvad_toggle           # Toggles VPN on/off
+    #   mullvad_toggle on        # Connects using default server
+    #   mullvad_toggle on <server_name>  # Connects using specified server
+    #   mullvad_toggle off       # Disconnects VPN
+    #
+
+    DEFAULT_SERVER="ro-buh-wg-001"  # Change this to your preferred default server
+
+    # Get Mullvad connection status
+    STATUS=$(mullvad status)
+
+    if [ -z "$1" ]; then
+        # Toggle behavior: disconnect if connected, connect if disconnected
+        if echo "$STATUS" | grep -q "Connected"; then
+            ACTION="off"
+        else
+            ACTION="on"
+        fi
+    else
+        ACTION="$1"
+    fi
+
+    if [ "$ACTION" = "on" ]; then
+        SERVER="${2:-$DEFAULT_SERVER}"  # Use provided server or default
+
+        echo "Setting Mullvad to server: $SERVER..."
+        mullvad relay set location "$SERVER"
+
+        echo "Connecting to Mullvad VPN..."
+        mullvad connect
+
+        # Wait for connection
+        sleep 5
+
+        if mullvad status | grep -q "Connected"; then
+            echo "Mullvad VPN successfully connected."
+            mullvad lockdown-mode set on  # Fixed command
+            echo "Lockdown mode enabled."
+        else
+            echo "Error: Mullvad VPN failed to connect!"
+            return 1
+        fi
+
+    elif [ "$ACTION" = "off" ]; then
+        echo "Disconnecting from Mullvad VPN..."
+        mullvad disconnect
+
+        echo "Disabling Mullvad lockdown mode..."
+        mullvad lockdown-mode set off  # Fixed command
+
+        echo "Mullvad VPN disconnected and lockdown mode disabled."
+
+    else
+        echo "Usage: mullvad_toggle [on [server_name] | off]"
+        return 1
+    fi
+}
