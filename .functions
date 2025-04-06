@@ -98,6 +98,14 @@ mullvad_toggle() {
         fi
 
     elif [ "$ACTION" = "off" ]; then
+
+        # Check if the application is running by looking for its process ID (PID)
+        echo "Attempting to quit Transmission"
+        if pgrep -x "Transmission" > /dev/null; then
+            killall "Transmission"
+            sleep 3
+        fi
+
         echo "Disconnecting from Mullvad VPN..."
         mullvad disconnect
 
