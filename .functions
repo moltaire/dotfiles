@@ -122,3 +122,46 @@ mullvad_toggle() {
     STATUS=$(mullvad status)
     echo "Mullvad Status: $STATUS"  # Print status
 }
+
+
+wav2mp3() {
+    # Convert WAV files to MP3 format using ffmpeg
+    # Usage: wav2mp3 <input.wav>
+    # Output: Creates <input>.mp3 with 44.1kHz, stereo, 192k bitrate
+    
+    if [ $# -eq 0 ]; then
+        echo "Usage: wav2mp3 <input.wav>" >&2
+        return 1
+    fi
+    
+    local input_file="$1"
+    
+    # Check if input file exists
+    if [ ! -f "$input_file" ]; then
+        echo "Error: File '$input_file' not found" >&2
+        return 1
+    fi
+    
+    # Check if input file has .wav extension (case-insensitive)
+    case "$(echo "$input_file" | tr '[:upper:]' '[:lower:]')" in
+        *.wav) ;;
+        *) echo "Warning: Input file doesn't have .wav extension" >&2 ;;
+    esac
+    
+    # Generate output filename, handling various extensions
+    local base_name="${input_file%.*}"
+    local output_file="${base_name}.mp3"
+    
+    # Check if output file already exists
+    if [ -f "$output_file" ]; then
+        echo "Warning: '$output_file' already exists. Overwriting..." >&2
+    fi
+    
+    # Run ffmpeg with error handling
+    if ffmpeg -i "$input_file" -vn -ar 44100 -ac 2 -b:a 192k "$output_file"; then
+        echo "Successfully converted '$input_file' to '$output_file'"
+    else
+        echo "Error: Conversion failed" >&2
+        return 1
+    fi
+}
